@@ -19,6 +19,12 @@
 
 #include "RS485.h"
 
+#ifdef ESP8266
+typedef SerialConfig SERIALCONFIG;
+#else
+typedef uint16_t SERIALCONFIG;
+#endif
+
 RS485Class::RS485Class(HardwareSerial& hwSerial, int txPin, int dePin, int rePin) :
   _serial(&hwSerial),
   _txPin(txPin),
@@ -50,7 +56,7 @@ void RS485Class::begin(unsigned long baudrate, uint16_t config)
 
   _transmisionBegun = false;
 
-  _serial->begin(baudrate, config);
+  _serial->begin(baudrate, (SERIALCONFIG)config);
 }
 
 void RS485Class::end()
@@ -146,7 +152,7 @@ void RS485Class::sendBreak(unsigned int duration)
   pinMode(_txPin, OUTPUT);
   digitalWrite(_txPin, LOW);
   delay(duration);
-  _serial->begin(_baudrate, _config);
+  _serial->begin(_baudrate, (SERIALCONFIG)_config);
 }
 
 void RS485Class::sendBreakMicroseconds(unsigned int duration)
@@ -156,7 +162,7 @@ void RS485Class::sendBreakMicroseconds(unsigned int duration)
   pinMode(_txPin, OUTPUT);
   digitalWrite(_txPin, LOW);
   delayMicroseconds(duration);
-  _serial->begin(_baudrate, _config);
+  _serial->begin(_baudrate, (SERIALCONFIG)_config);
 }
 
 void RS485Class::setPins(int txPin, int dePin, int rePin)
